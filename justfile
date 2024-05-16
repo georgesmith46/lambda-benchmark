@@ -38,9 +38,9 @@ deploy-go:
     rm function.zip
 
 deploy-invoker:
-    cargo lambda build --manifest-path invoker/Cargo.toml --release --arm64 --output-format zip
+    ACCOUNT={{account}} cargo lambda build --manifest-path invoker/Cargo.toml --release --arm64 --output-format zip
     aws lambda create-function --function-name lambda-benchmark-invoker --handler bootstrap --zip-file fileb://./invoker/target/lambda/invoker/bootstrap.zip --runtime provided.al2023 --role arn:aws:iam::{{account}}:role/lambda-ex --environment Variables={RUST_BACKTRACE=1} --tracing-config Mode=Active --architectures arm64 --timeout 100 --region us-east-1 --memory-size 1024 --no-cli-pager
-    aws scheduler create-schedule --name lambda-benchmark-schedule --schedule-expression 'rate(15 minutes)' --target '{"RoleArn": "arn:aws:iam::{{account}}:role/lambda-ex", "Arn": "arn:aws:lambda:us-east-1:{{account}}:function:lambda-benchmark-invoker", "Input": "{}" }' --flexible-time-window '{ "Mode": "OFF"}' --region us-east-1 --no-cli-pager
+    aws scheduler create-schedule --name lambda-benchmark-schedule --schedule-expression 'cron(0,15,30,45 * * * ? *)' --target '{"RoleArn": "arn:aws:iam::{{account}}:role/lambda-ex", "Arn": "arn:aws:lambda:us-east-1:{{account}}:function:lambda-benchmark-invoker", "Input": "{}" }' --flexible-time-window '{ "Mode": "OFF"}' --region us-east-1 --no-cli-pager
 
 deploy-all:
     just deploy-iam
@@ -62,6 +62,7 @@ cleanup-lambdas:
 
 cleanup-invoker:
     aws lambda delete-function --function-name lambda-benchmark-invoker --region us-east-1 || true
+    aws scheduler delete-schedule --name lambda-benchmark-schedule --region us-east-1 --no-cli-pager || true
     
 cleanup: cleanup-lambdas && cleanup-invoker
     aws iam detach-role-policy --role-name lambda-ex --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole || true
@@ -69,4 +70,3 @@ cleanup: cleanup-lambdas && cleanup-invoker
     aws iam detach-role-policy --role-name lambda-ex --policy-arn arn:aws:iam::aws:policy/AWSLambda_FullAccess || true
     aws iam delete-role --role-name lambda-ex || true
     aws dynamodb delete-table --table-name Music --region us-east-1 --no-cli-pager || true
-    aws scheduler delete-schedule --name lambda-benchmark-schedule --region us-east-1 --no-cli-pager || true

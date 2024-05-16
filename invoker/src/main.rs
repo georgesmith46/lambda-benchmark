@@ -40,7 +40,8 @@ async fn invoke_lambda(client: &Client, lambda_type: &str) -> Result<u128, Error
     client
         .invoke()
         .function_name(format!(
-            "arn:aws:lambda:us-east-1:516028615317:function:lambda-benchmark-{lambda_type}{suffix}"
+            "arn:aws:lambda:us-east-1:{}:function:lambda-benchmark-{lambda_type}{suffix}",
+            std::option_env!("ACCOUNT").expect("account env var should be set")
         ))
         .payload(Blob::new(b"{}"))
         .send()
