@@ -1,3 +1,4 @@
 .DS_Store
 functions/java/build
 functions/java/.gradle
+functions/go/bootstrap
