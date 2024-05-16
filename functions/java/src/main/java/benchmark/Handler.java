@@ -12,9 +12,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Handler implements RequestHandler<IncomingEvent, Integer> {
-  private static final DynamoDbClient ddb = DynamoDbClient.builder()
-      .region(Region.US_EAST_1)
-      .build();
+  private static final DynamoDbClient ddb;
+
+  static {
+    ddb = DynamoDbClient.builder()
+        .region(Region.US_EAST_1)
+        .build();
+
+    // Perform a "warm up" read to initialize the connection
+    HashMap<String, AttributeValue> warmUpKey = new HashMap<>();
+    warmUpKey.put("Artist", AttributeValue.builder().s("WarmUpArtist").build());
+    warmUpKey.put("SongTitle", AttributeValue.builder().s("WarmUpSong").build());
+
+    GetItemRequest warmUpRequest = GetItemRequest.builder()
+        .key(warmUpKey)
+        .tableName("Music")
+        .build();
+
+    try {
+      ddb.getItem(warmUpRequest);
+    } catch (DynamoDbException e) {
+      // Log or handle the exception as necessary
+      System.err.println("Warm up read failed: " + e.getMessage());
+    }
+  }
 
   @Override
   public Integer handleRequest(IncomingEvent event, Context context) {
