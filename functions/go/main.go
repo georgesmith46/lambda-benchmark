@@ -20,11 +20,11 @@ func HandleRequest(ctx context.Context, event *MyEvent, svc *dynamodb.DynamoDB) 
 	result, err := svc.GetItem(&dynamodb.GetItemInput{
 		TableName: aws.String(tableName),
 		Key: map[string]*dynamodb.AttributeValue{
-			"Year": {
-				N: aws.String(songTitle),
-			},
-			"Title": {
+			"Artist": {
 				S: aws.String(artist),
+			},
+			"SongTitle": {
+				S: aws.String(songTitle),
 			},
 		},
 	})
