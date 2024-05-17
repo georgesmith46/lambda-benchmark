@@ -12,82 +12,122 @@
 
 ## Results
 
-### go cold starts
-Min: 447ms
-
-Max: 971ms
-
-Avg: 618ms
-
-
 ### node cold starts
 Min: 468ms
 
-Max: 703ms
+Avg: 565ms
 
-Avg: 563ms
+p50: 568ms
+
+p90: 620ms
+
+Max: 703ms
 
 
 ### java-snapstart cold starts
 Min: 793ms
 
-Max: 2228ms
+Avg: 1105ms
 
-Avg: 1109ms
+p50: 933ms
+
+p90: 1712ms
+
+Max: 2228ms
 
 
 ### rust cold starts
 Min: 378ms
 
+Avg: 524ms
+
+p50: 494ms
+
+p90: 689ms
+
 Max: 767ms
 
-Avg: 526ms
+
+### go cold starts
+Min: 447ms
+
+Avg: 615ms
+
+p50: 606ms
+
+p90: 735ms
+
+Max: 971ms
 
 
 ### java cold starts
 Min: 1743ms
 
-Max: 2598ms
+Avg: 2294ms
 
-Avg: 2292ms
+p50: 2323ms
+
+p90: 2498ms
+
+Max: 2598ms
 
 
 
 ### go warm starts
 Min: 16ms
 
-Max: 27ms
-
 Avg: 19ms
 
+p50: 19ms
 
-### node warm starts
-Min: 15ms
+p90: 22ms
 
-Max: 29ms
-
-Avg: 19ms
+Max: 50ms
 
 
 ### rust warm starts
 Min: 12ms
 
-Max: 40ms
-
 Avg: 16ms
 
+p50: 16ms
 
-### java warm starts
-Min: 16ms
+p90: 19ms
 
-Max: 38ms
-
-Avg: 21ms
+Max: 56ms
 
 
 ### java-snapstart warm starts
 Min: 17ms
 
-Max: 43ms
+Avg: 22ms
 
-Avg: 23ms
+p50: 21ms
+
+p90: 28ms
+
+Max: 312ms
+
+
+### java warm starts
+Min: 16ms
+
+Avg: 21ms
+
+p50: 20ms
+
+p90: 26ms
+
+Max: 61ms
+
+
+### node warm starts
+Min: 15ms
+
+Avg: 20ms
+
+p50: 19ms
+
+p90: 26ms
+
+Max: 57ms
