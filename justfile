@@ -27,6 +27,16 @@ deploy-node:
     aws lambda create-function --function-name lambda-benchmark-node --zip-file fileb://function.zip --handler index.handler --runtime nodejs20.x --role arn:aws:iam::{{account}}:role/lambda-ex --timeout 10 --region us-east-1 --memory-size 1024 --no-cli-pager
     rm function.zip
 
+deploy-python:
+    zip -j function.zip functions/python/main.py
+    aws lambda create-function --function-name lambda-benchmark-python --zip-file fileb://function.zip --handler main.handler --runtime python3.8 --role arn:aws:iam::{{account}}:role/lambda-ex --timeout 10 --region us-east-1 --memory-size 1024 --no-cli-pager
+    rm function.zip
+
+deploy-llrt:
+    zip -j function.zip functions/llrt/*
+    aws lambda create-function --function-name lambda-benchmark-llrt --handler index.handler --zip-file fileb://function.zip --runtime provided.al2023 --role arn:aws:iam::{{account}}:role/lambda-ex --architectures arm64 --timeout 10 --region us-east-1 --memory-size 1024 --no-cli-pager
+    rm function.zip
+
 deploy-rust:
     cargo lambda build --manifest-path functions/rust/Cargo.toml --release --arm64 --output-format zip
     aws lambda create-function --function-name lambda-benchmark-rust --handler bootstrap --zip-file fileb://./functions/rust/target/lambda/rust/bootstrap.zip --runtime provided.al2023 --role arn:aws:iam::{{account}}:role/lambda-ex --environment Variables={RUST_BACKTRACE=1} --tracing-config Mode=Active --architectures arm64 --timeout 10 --region us-east-1 --memory-size 1024 --no-cli-pager
@@ -48,22 +58,47 @@ deploy-all:
     just deploy-java
     just deploy-java-snapstart
     just deploy-node
+    just deploy-llrt
+    just deploy-python
     just deploy-rust
     just deploy-go
     just deploy-invoker
     just add-data
 
-cleanup-lambdas:
+cleanup-node:
     aws lambda delete-function --function-name lambda-benchmark-node --region us-east-1 || true
+
+cleanup-llrt:
+    aws lambda delete-function --function-name lambda-benchmark-llrt --region us-east-1 || true
+
+cleanup-python:
+    aws lambda delete-function --function-name lambda-benchmark-python --region us-east-1 || true
+
+cleanup-java:
     aws lambda delete-function --function-name lambda-benchmark-java --region us-east-1 || true
+
+cleanup-java-snapstart:
     aws lambda delete-function --function-name lambda-benchmark-java-snapstart --region us-east-1 || true
+
+cleanup-rust:
     aws lambda delete-function --function-name lambda-benchmark-rust --region us-east-1 || true
+
+cleanup-go:
     aws lambda delete-function --function-name lambda-benchmark-go --region us-east-1 || true
+
+cleanup-lambdas:
+    just cleanup-java
+    just cleanup-java-snapstart
+    just cleanup-node
+    just cleanup-llrt
+    just cleanup-python
+    just cleanup-rust
+    just cleanup-go
 
 cleanup-invoker:
     aws lambda delete-function --function-name lambda-benchmark-invoker --region us-east-1 || true
     aws scheduler delete-schedule --name lambda-benchmark-schedule --region us-east-1 --no-cli-pager || true
-    
+
 cleanup: cleanup-lambdas && cleanup-invoker
     aws iam detach-role-policy --role-name lambda-ex --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole || true
     aws iam detach-role-policy --role-name lambda-ex --policy-arn arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess || true

@@ -8,7 +8,15 @@ use serde::Serialize;
 use serde_json::Value;
 use std::time::Instant;
 
-const LAMBDA_TYPES: [&str; 5] = ["rust", "go", "node", "java", "java-snapstart"];
+const LAMBDA_TYPES: [&str; 7] = [
+    "rust",
+    "go",
+    "node",
+    "java",
+    "java-snapstart",
+    "llrt",
+    "python",
+];
 
 #[derive(Default, Debug, Serialize)]
 struct Report {
