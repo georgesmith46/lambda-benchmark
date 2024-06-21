@@ -1,4 +1,5 @@
 account := "516028615317"
+memory := "2048"
 
 deploy-db:
     aws dynamodb create-table --table-name Music --attribute-definitions AttributeName=Artist,AttributeType=S AttributeName=SongTitle,AttributeType=S --key-schema AttributeName=Artist,KeyType=HASH AttributeName=SongTitle,KeyType=RANGE --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 --region us-east-1 --no-cli-pager
@@ -14,42 +15,42 @@ deploy-iam:
         
 deploy-java:
     gradle buildZip -p functions/java
-    aws lambda create-function --function-name lambda-benchmark-java --zip-file fileb://./functions/java/build/distributions/java.zip --handler benchmark.Handler --runtime java17 --role arn:aws:iam::{{account}}:role/lambda-ex --timeout 10 --region us-east-1 --memory-size 1024 --no-cli-pager
+    aws lambda create-function --function-name lambda-benchmark-java --zip-file fileb://./functions/java/build/distributions/java.zip --handler benchmark.Handler --runtime java17 --role arn:aws:iam::{{account}}:role/lambda-ex --timeout 10 --region us-east-1 --memory-size {{memory}} --no-cli-pager
 
 deploy-java-snapstart:
     gradle buildZip -p functions/java
-    aws lambda create-function --function-name lambda-benchmark-java-snapstart --zip-file fileb://./functions/java/build/distributions/java.zip --handler benchmark.Handler --runtime java17 --role arn:aws:iam::{{account}}:role/lambda-ex --timeout 10 --region us-east-1 --memory-size 1024 --snap-start ApplyOn=PublishedVersions --no-cli-pager
+    aws lambda create-function --function-name lambda-benchmark-java-snapstart --zip-file fileb://./functions/java/build/distributions/java.zip --handler benchmark.Handler --runtime java17 --role arn:aws:iam::{{account}}:role/lambda-ex --timeout 10 --region us-east-1 --memory-size {{memory}} --snap-start ApplyOn=PublishedVersions --no-cli-pager
     sleep 5
     VERSION=$(aws lambda publish-version --function-name lambda-benchmark-java-snapstart --region us-east-1 --query 'Version' --output text) && aws lambda create-alias --function-name lambda-benchmark-java-snapstart --name PROD --function-version $VERSION --region us-east-1 --no-cli-pager
 
 deploy-node:
     zip -j function.zip functions/node/index.mjs
-    aws lambda create-function --function-name lambda-benchmark-node --zip-file fileb://function.zip --handler index.handler --runtime nodejs20.x --role arn:aws:iam::{{account}}:role/lambda-ex --timeout 10 --region us-east-1 --memory-size 1024 --no-cli-pager
+    aws lambda create-function --function-name lambda-benchmark-node --zip-file fileb://function.zip --handler index.handler --runtime nodejs20.x --role arn:aws:iam::{{account}}:role/lambda-ex --timeout 10 --region us-east-1 --memory-size {{memory}} --no-cli-pager
     rm function.zip
 
 deploy-python:
     zip -j function.zip functions/python/main.py
-    aws lambda create-function --function-name lambda-benchmark-python --zip-file fileb://function.zip --handler main.handler --runtime python3.8 --role arn:aws:iam::{{account}}:role/lambda-ex --timeout 10 --region us-east-1 --memory-size 1024 --no-cli-pager
+    aws lambda create-function --function-name lambda-benchmark-python --zip-file fileb://function.zip --handler main.handler --runtime python3.8 --role arn:aws:iam::{{account}}:role/lambda-ex --timeout 10 --region us-east-1 --memory-size {{memory}} --no-cli-pager
     rm function.zip
 
 deploy-llrt:
     zip -j function.zip functions/llrt/*
-    aws lambda create-function --function-name lambda-benchmark-llrt --handler index.handler --zip-file fileb://function.zip --runtime provided.al2023 --role arn:aws:iam::{{account}}:role/lambda-ex --architectures arm64 --timeout 10 --region us-east-1 --memory-size 1024 --no-cli-pager
+    aws lambda create-function --function-name lambda-benchmark-llrt --handler index.handler --zip-file fileb://function.zip --runtime provided.al2023 --role arn:aws:iam::{{account}}:role/lambda-ex --architectures arm64 --timeout 10 --region us-east-1 --memory-size {{memory}} --no-cli-pager
     rm function.zip
 
 deploy-rust:
     cargo lambda build --manifest-path functions/rust/Cargo.toml --release --arm64 --output-format zip
-    aws lambda create-function --function-name lambda-benchmark-rust --handler bootstrap --zip-file fileb://./functions/rust/target/lambda/rust/bootstrap.zip --runtime provided.al2023 --role arn:aws:iam::{{account}}:role/lambda-ex --environment Variables={RUST_BACKTRACE=1} --tracing-config Mode=Active --architectures arm64 --timeout 10 --region us-east-1 --memory-size 1024 --no-cli-pager
+    aws lambda create-function --function-name lambda-benchmark-rust --handler bootstrap --zip-file fileb://./functions/rust/target/lambda/rust/bootstrap.zip --runtime provided.al2023 --role arn:aws:iam::{{account}}:role/lambda-ex --environment Variables={RUST_BACKTRACE=1} --tracing-config Mode=Active --architectures arm64 --timeout 10 --region us-east-1 --memory-size {{memory}} --no-cli-pager
 
 deploy-go:
     GOOS=linux GOARCH=arm64 go build -C functions/go -tags lambda.norpc -o bootstrap main.go
     zip -j function.zip functions/go/bootstrap
-    aws lambda create-function --function-name lambda-benchmark-go --runtime provided.al2023 --handler bootstrap --architectures arm64 --role arn:aws:iam::{{account}}:role/lambda-ex --zip-file fileb://function.zip --timeout 10 --memory-size 1024 --region us-east-1 --no-cli-pager
+    aws lambda create-function --function-name lambda-benchmark-go --runtime provided.al2023 --handler bootstrap --architectures arm64 --role arn:aws:iam::{{account}}:role/lambda-ex --zip-file fileb://function.zip --timeout 10 --memory-size {{memory}} --region us-east-1 --no-cli-pager
     rm function.zip
 
 deploy-invoker:
     ACCOUNT={{account}} cargo lambda build --manifest-path invoker/Cargo.toml --release --arm64 --output-format zip
-    aws lambda create-function --function-name lambda-benchmark-invoker --handler bootstrap --zip-file fileb://./invoker/target/lambda/invoker/bootstrap.zip --runtime provided.al2023 --role arn:aws:iam::{{account}}:role/lambda-ex --environment Variables={RUST_BACKTRACE=1} --tracing-config Mode=Active --architectures arm64 --timeout 100 --region us-east-1 --memory-size 1024 --no-cli-pager
+    aws lambda create-function --function-name lambda-benchmark-invoker --handler bootstrap --zip-file fileb://./invoker/target/lambda/invoker/bootstrap.zip --runtime provided.al2023 --role arn:aws:iam::{{account}}:role/lambda-ex --environment Variables={RUST_BACKTRACE=1} --tracing-config Mode=Active --architectures arm64 --timeout 100 --region us-east-1 --memory-size {{memory}} --no-cli-pager
     aws scheduler create-schedule --name lambda-benchmark-schedule --schedule-expression 'cron(0,15,30,45 * * * ? *)' --target '{"RoleArn": "arn:aws:iam::{{account}}:role/lambda-ex", "Arn": "arn:aws:lambda:us-east-1:{{account}}:function:lambda-benchmark-invoker", "Input": "{}" }' --flexible-time-window '{ "Mode": "OFF"}' --region us-east-1 --no-cli-pager
 
 deploy-all:
