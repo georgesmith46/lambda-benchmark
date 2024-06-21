@@ -12,122 +12,24 @@
 
 ## Results
 
-### node cold starts
-Min: 468ms
+### Round-trip duration when cold starting
+|lambda_type   |min |avg |p50 |p90 |max |
+|--------------|----|----|----|----|----|
+|go            |314 |408 |369 |557 |609 |
+|java          |2213|2496|2507|2658|3032|
+|java-snapstart|842 |984 |944 |1083|1196|
+|llrt          |227 |326 |304 |390 |617 |
+|node          |454 |544 |542 |593 |700 |
+|python        |451 |524 |514 |573 |642 |
+|rust          |380 |498 |504 |577 |679 |
 
-Avg: 565ms
-
-p50: 568ms
-
-p90: 620ms
-
-Max: 703ms
-
-
-### java-snapstart cold starts
-Min: 793ms
-
-Avg: 1105ms
-
-p50: 933ms
-
-p90: 1712ms
-
-Max: 2228ms
-
-
-### rust cold starts
-Min: 378ms
-
-Avg: 524ms
-
-p50: 494ms
-
-p90: 689ms
-
-Max: 767ms
-
-
-### go cold starts
-Min: 447ms
-
-Avg: 615ms
-
-p50: 606ms
-
-p90: 735ms
-
-Max: 971ms
-
-
-### java cold starts
-Min: 1743ms
-
-Avg: 2294ms
-
-p50: 2323ms
-
-p90: 2498ms
-
-Max: 2598ms
-
-
-
-### go warm starts
-Min: 16ms
-
-Avg: 19ms
-
-p50: 19ms
-
-p90: 22ms
-
-Max: 50ms
-
-
-### rust warm starts
-Min: 12ms
-
-Avg: 16ms
-
-p50: 16ms
-
-p90: 19ms
-
-Max: 56ms
-
-
-### java-snapstart warm starts
-Min: 17ms
-
-Avg: 22ms
-
-p50: 21ms
-
-p90: 28ms
-
-Max: 312ms
-
-
-### java warm starts
-Min: 16ms
-
-Avg: 21ms
-
-p50: 20ms
-
-p90: 26ms
-
-Max: 61ms
-
-
-### node warm starts
-Min: 15ms
-
-Avg: 20ms
-
-p50: 19ms
-
-p90: 26ms
-
-Max: 57ms
+### Round-trip duration when warm
+|lambda_type   |min |avg |p50 |p90 |max |
+|--------------|----|----|----|----|----|
+|go            |12  |15  |15  |18  |37  |
+|java          |15  |20  |20  |25  |44  |
+|java-snapstart|16  |21  |20  |26  |62  |
+|llrt          |13  |16  |16  |20  |43  |
+|node          |14  |19  |18  |23  |47  |
+|python        |9   |13  |13  |16  |32  |
+|rust          |12  |16  |15  |19  |59  |
