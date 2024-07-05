@@ -8,10 +8,11 @@ use serde::Serialize;
 use serde_json::Value;
 use std::time::Instant;
 
-const LAMBDA_TYPES: [&str; 7] = [
+const LAMBDA_TYPES: [&str; 8] = [
     "rust",
     "go",
     "node",
+    "node-bundled",
     "java",
     "java-snapstart",
     "llrt",

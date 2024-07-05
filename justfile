@@ -1,5 +1,5 @@
 account := "516028615317"
-memory := "2048"
+memory := "1024"
 
 deploy-db:
     aws dynamodb create-table --table-name Music --attribute-definitions AttributeName=Artist,AttributeType=S AttributeName=SongTitle,AttributeType=S --key-schema AttributeName=Artist,KeyType=HASH AttributeName=SongTitle,KeyType=RANGE --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 --region us-east-1 --no-cli-pager
@@ -26,6 +26,12 @@ deploy-java-snapstart:
 deploy-node:
     zip -j function.zip functions/node/index.mjs
     aws lambda create-function --function-name lambda-benchmark-node --zip-file fileb://function.zip --handler index.handler --runtime nodejs20.x --role arn:aws:iam::{{account}}:role/lambda-ex --timeout 10 --region us-east-1 --memory-size {{memory}} --no-cli-pager
+    rm function.zip
+
+deploy-node-bundled:
+    npm run build --prefix functions/node-bundled
+    zip -j function.zip functions/node-bundled/index.js
+    aws lambda create-function --function-name lambda-benchmark-node-bundled --zip-file fileb://function.zip --handler index.handler --runtime nodejs20.x --role arn:aws:iam::{{account}}:role/lambda-ex --timeout 10 --region us-east-1 --memory-size {{memory}} --no-cli-pager
     rm function.zip
 
 deploy-python:
@@ -59,6 +65,7 @@ deploy-all:
     just deploy-java
     just deploy-java-snapstart
     just deploy-node
+    just deploy-node-bundled
     just deploy-llrt
     just deploy-python
     just deploy-rust
@@ -68,6 +75,9 @@ deploy-all:
 
 cleanup-node:
     aws lambda delete-function --function-name lambda-benchmark-node --region us-east-1 || true
+
+cleanup-node-bundled:
+    aws lambda delete-function --function-name lambda-benchmark-node-bundled --region us-east-1 || true
 
 cleanup-llrt:
     aws lambda delete-function --function-name lambda-benchmark-llrt --region us-east-1 || true
@@ -91,6 +101,7 @@ cleanup-lambdas:
     just cleanup-java
     just cleanup-java-snapstart
     just cleanup-node
+    just cleanup-node-bundled
     just cleanup-llrt
     just cleanup-python
     just cleanup-rust
