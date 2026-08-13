@@ -1,19 +1,15 @@
 import boto3
 
 client = boto3.client('dynamodb', region_name='us-east-1')
-
 table_name = 'Music'
 
-def handler():
-    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
-    table = dynamodb.Table(table_name)
-
+def handler(event, context):
     key = {
-        'Artist': 'No One You Know',
-        'SongTitle': 'Call Me Today'
+        'Artist': {'S': 'No One You Know'},
+        'SongTitle': {'S': 'Call Me Today'}
     }
 
-    response = table.get_item(Key=key)
+    response = client.get_item(TableName=table_name, Key=key)
 
     print(response)
 
