@@ -8,6 +8,7 @@ import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
+import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ public class Handler implements RequestHandler<IncomingEvent, Integer> {
   static {
     ddb = DynamoDbClient.builder()
         .region(Region.US_EAST_1)
+        .httpClient(UrlConnectionHttpClient.builder().build())
         .build();
 
     // Perform a "warm up" read to initialize the connection
