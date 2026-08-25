@@ -33,7 +33,7 @@ struct LambdaReport {
 async fn collect_logs() -> Result<Vec<Day>> {
     let config = aws_config::from_env().region("us-east-1").load().await;
     let client = aws_sdk_cloudwatchlogs::Client::new(&config);
-    let start_time = DateTime::parse_from_rfc3339("2024-07-05T15:00:00Z").unwrap();
+    let start_time = DateTime::parse_from_rfc3339("2026-08-20T20:00:00Z").unwrap();
 
     let response = client
         .start_query()
