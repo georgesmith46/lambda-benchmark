@@ -6,7 +6,6 @@
 1. Run `just deploy-all`
 1. The invoker function will invoke each lambda every 15 minutes and log the durations.
 
-
 ## Clean up
 1. Run `just cleanup` to remove all the infrastructure
 
@@ -35,3 +34,4 @@
 |node-bundled  |13  |20  |20  |37  |337 |
 |python        |8   |15  |15  |28  |415 |
 |rust          |11  |17  |17  |34  |163 |
+
