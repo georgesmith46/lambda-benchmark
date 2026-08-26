@@ -15,7 +15,7 @@ deploy-iam:
         
 deploy-java:
     gradle buildZip -p functions/java
-    aws lambda create-function --function-name lambda-benchmark-java --zip-file fileb://./functions/java/build/distributions/java.zip --handler benchmark.Handler --runtime java17 --role arn:aws:iam::{{account}}:role/lambda-ex --timeout 10 --region us-east-1 --memory-size {{memory}} --no-cli-pager
+    aws lambda create-function --function-name lambda-benchmark-java --zip-file fileb://./functions/java/build/distributions/java.zip --handler benchmark.Handler --runtime java17 --role arn:aws:iam::{{account}}:role/lambda-ex --environment "Variables={JAVA_TOOL_OPTIONS='-XX:+TieredCompilation -XX:TieredStopAtLevel=1'}" --timeout 10 --region us-east-1 --memory-size {{memory}} --no-cli-pager
 
 deploy-java-snapstart:
     gradle buildZip -p functions/java

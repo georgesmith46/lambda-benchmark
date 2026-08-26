@@ -4,3 +4,5 @@ functions/java/.gradle
 functions/go/bootstrap
 functions/node-bundled/index.js
 functions/node-bundled/node_modules
+functions/go/main
+functions/python/__pycache__/
